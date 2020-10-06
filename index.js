@@ -1,44 +1,53 @@
 const fs = require('fs')
-const { authorize, getAccessToken, uploadFile } = require('./googleDrive.js');
+const { authorize, getAccessToken, uploadMultipleFile } = require('./googleDrive.js');
 const DIRECTORY = "C:\\Users\\fuckingretard\\Downloads"
 const EXT = ["mp4", "mp3", "webm", "mov", "wav", "wmv", "3gp", "gif", "png", "apng", "jpg", "jpeg", "webp", "jfif",]
 
-
+function partial(func /*, 0..n args */) {
+    var args = Array.prototype.slice.call(arguments, 1);
+    return function () {
+        var allArguments = args.concat(Array.prototype.slice.call(arguments));
+        return func.apply(this, allArguments);
+    };
+}
 
 function endsWithAny(suffixes, string) {
     return suffixes.some(function (suffix) {
         return string.endsWith(suffix);
     });
 }
-
 const files = fs.readdirSync(DIRECTORY)
+              .map(function(v) { 
+                  return { name:v,
+                           time:fs.statSync(DIRECTORY + "\\" + v).mtime.getTime()
+                         }; 
+               })
+               .sort(function(a, b) { return b.time - a.time; })
+               .map(function(v) { return v.name; });
+               // https://stackoverflow.com/a/10559790
 
-for (const file of files) {
+var fileContentArray = []
 
-    if (endsWithAny(EXT, file)) {
+fs.readFile('credentials.json', (err, content) => {
+    for (const file of files) {
+        if (endsWithAny(EXT, file)) {
+            fileContentArray.push({
+                fileMetadata: {
+                    "name": file,
+                    'parents': ["1P5Q25qUgZSjaxQugddJo1k2_XXhJq0r9"]
+                },
+                media: {
+                    body: fs.createReadStream(DIRECTORY + "\\" + file)
+                },
+                failedCount: 0,
+            })
+            fs.rename(DIRECTORY + "\\" + file, './dest/' + file, function (err) {
+                if (err) throw err;
+                console.log('Move complete. ' + file);
+            });
 
-        var fileMetadata = {
-            "name": file
         }
-        var media = {   
-            mimeType: 'image/jpeg',
-            body: fs.createReadStream(DIRECTORY + "\\" + file)
-        }
-
-        // Upload the file to google drive using the client secret
-        fs.readFile('credentials.json', (err, content) => {
-            if (err) return console.log('Error loading client secret file:', err);
-            // Authorize a client with credentials, then call the Google Drive API.
-            authorize(JSON.parse(content), uploadFile(fileMetadata, media));
-        })
-
-        /*fs.rename(DIRECTORY + "\\" + file, './dest/' + file, function (err) {
-            if (err) throw err;
-            console.log('Move complete. ' + file);
-        });*/
-
     }
-}
-
-// Get credential secret file
-
+    console.log(fileContentArray)
+    authorize(JSON.parse(content), (auth) => { uploadMultipleFile(auth, fileContentArray) });
+});

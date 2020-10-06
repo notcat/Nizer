@@ -1,0 +1,25 @@
+{
+  "name": "Nizer",
+  "version": "1.0.0",
+  "description": "Node.JS application to organise and backup files to Google Drive",
+  "main": "index.js",
+  "dependencies": {
+    "googleapis": "^39.2.0",
+    "limiter": "^1.1.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/notcat/Nizer.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/notcat/Nizer/issues"
+  },
+  "homepage": "https://github.com/notcat/Nizer#readme"
+}
