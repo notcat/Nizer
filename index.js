@@ -34,7 +34,7 @@ fs.readFile('credentials.json', (err, content) => {
             fileContentArray.push({
                 fileMetadata: {
                     "name": file,
-                    'parents': ["1P5Q25qUgZSjaxQugddJo1k2_XXhJq0r9"]
+                    'parents': ["1ssnnVEFZ7dEVc4vxXVw9XiTg2lc0ZYDs"]
                 },
                 media: {
                     body: fs.createReadStream(DIRECTORY + "\\" + file)
