@@ -1,15 +1,8 @@
 const fs = require('fs')
 const { authorize, getAccessToken, uploadMultipleFile } = require('./googleDrive.js');
 const DIRECTORY = "C:\\Users\\fuckingretard\\Downloads"
+const OUTPUT = "./dest/"
 const EXT = ["mp4", "mp3", "webm", "mov", "wav", "wmv", "3gp", "gif", "png", "apng", "jpg", "jpeg", "webp", "jfif",]
-
-function partial(func /*, 0..n args */) {
-    var args = Array.prototype.slice.call(arguments, 1);
-    return function () {
-        var allArguments = args.concat(Array.prototype.slice.call(arguments));
-        return func.apply(this, allArguments);
-    };
-}
 
 function endsWithAny(suffixes, string) {
     return suffixes.some(function (suffix) {
@@ -41,7 +34,7 @@ fs.readFile('credentials.json', (err, content) => {
                 },
                 failedCount: 0,
             })
-            fs.rename(DIRECTORY + "\\" + file, './dest/' + file, function (err) {
+            fs.rename(DIRECTORY + "\\" + file, OUTPUT + file, function (err) {
                 if (err) throw err;
                 console.log('Move complete. ' + file);
             });
